@@ -55,7 +55,7 @@ class Dashboard1(Page):
         self.data = self.data.dropna()
         self.data['Passed_Exam'] = self.data['Exam_Score'].apply(lambda x: 1 if x > self.PASSED_TR else 0)
 
-    def create_scatter_plot(self, x_col, y_col, labels):
+    def create_scatter_plot(self, x_col, y_col):
         min_x = self.data[x_col].min()
         max_x = self.data[x_col].max()
         min_y = self.data[y_col].min()
@@ -65,11 +65,11 @@ class Dashboard1(Page):
         scatter_plot = (alt.Chart(self.data)
                         .mark_circle(color=self.SCATTER_COLOR)
                         .encode(
-            x=alt.X(x_col, title=labels[0], scale=alt.Scale(domain=(min_x, max_x))),
-            y=alt.Y(y_col, title=labels[1], scale=alt.Scale(domain=(min_y, max_y))),
+            x=alt.X(x_col, title=self.LABELS_AXES[x_col], scale=alt.Scale(domain=(min_x, max_x))),
+            y=alt.Y(y_col, title=self.LABELS_AXES[y_col], scale=alt.Scale(domain=(min_y, max_y))),
             tooltip=[
-                alt.Tooltip(x_col, title=labels[0]),
-                alt.Tooltip(y_col, title=labels[1]),
+                alt.Tooltip(x_col, title=self.LABELS_AXES[x_col]),
+                alt.Tooltip(y_col, title=self.LABELS_AXES[y_col]),
             ]
         ).properties(height=self.SCATTER_HEIGHT))
 
@@ -210,10 +210,10 @@ class Dashboard1(Page):
         with col[2]:
             with st.container(border=2):
                 h4_header('Attendance vs Exam Score')
-                scatter_plot = self.create_scatter_plot('Exam_Score', 'Attendance', 'Exam_Score')
+                scatter_plot = self.create_scatter_plot('Exam_Score', 'Attendance')
                 st.altair_chart(scatter_plot, use_container_width=True)
 
             with st.container(border=2):
                 h4_header('Hours Studied vs Exam Score')
-                scatter_plot = self.create_scatter_plot('Exam_Score', 'Hours_Studied', 'Exam_Score')
+                scatter_plot = self.create_scatter_plot('Exam_Score', 'Hours_Studied')
                 st.altair_chart(scatter_plot, use_container_width=True)

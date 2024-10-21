@@ -33,6 +33,7 @@ class Dashboard2(Page):
         "Learning_Disabilities": "Learning Disabilities",
         "Parental_Education_Level": "Parental Education Level",
         "Distance_from_Home": "Distance from Home",
+        "Gender": "Gender"
     }
 
     def __init__(self):
@@ -100,7 +101,7 @@ class Dashboard2(Page):
                                     labelOffset=10
                                 )),
                 tooltip=[
-                    alt.Tooltip('Feature Value:Q', title=self.LABELS_AXES[feature_name] + ': ', format='.2f'),
+                    alt.Tooltip('Feature Value:Q', title=': ', format='.2f'),
                     alt.Tooltip('SHAP Value:Q', title='SHAP Value: ', format='.2f'),
                 ]
             )
@@ -129,7 +130,7 @@ class Dashboard2(Page):
             feature_index = self.get_feature_index(feature_name)
             shap_feature_values = flatten_array(self.shap_values[:, feature_index])
             mean_shap_values.append(np.mean(np.abs(shap_feature_values)))
-        feature_names = self.X.columns
+        feature_names = [self.LABELS_AXES[fn] for fn in self.X.columns]
 
         # Create a DataFrame for plotting
         bar_data = pd.DataFrame({
@@ -139,15 +140,22 @@ class Dashboard2(Page):
 
         # Create the bar chart
         bar_chart = (alt.Chart(bar_data)
-                     .mark_bar(color='#008bfb')
+                     .mark_bar(color='#ff0051')
                      .encode(
             x=alt.X('Mean SHAP Value:Q', title='Mean SHAP Value',
                     scale=alt.Scale(domain=(0, bar_data['Mean SHAP Value'].max() * 1.1))),
             y=alt.Y('Feature:N', title='Feature', sort='-x'),
-            tooltip=['Feature', 'Mean SHAP Value']
+            tooltip=[
+                    alt.Tooltip('Feature:N', title="Feature: "),
+                    alt.Tooltip('Mean SHAP Value:Q', title='SHAP Value: ', format='.2f'),
+                ]
         )
                      .properties(height=self.SHAP_BAR_HEIGHT)
-                     .configure_mark(opacity=0.6))
+                     .configure_axis(
+            labelFontSize=14,  # Adjust label font size if necessary
+            titleFontSize=14,  # Adjust title font size if necessary
+            labelLimit=500  # Adjust label limit if necessary
+        ))
 
         # Display the bar chart
         st.altair_chart(bar_chart, use_container_width=True)
@@ -156,7 +164,7 @@ class Dashboard2(Page):
         col = st.columns((1, 1, 1), gap='medium')
         with col[0]:
             with st.container(border=2):
-                h4_header('Teacher Quality')
+                h4_header('Shap impact of features on exam score prediction')
                 self.plot_shap_bar_chart()
         with col[1]:
             with st.container(border=2):
