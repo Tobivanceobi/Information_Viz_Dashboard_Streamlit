@@ -2,6 +2,7 @@ import os
 import pickle
 
 import numpy as np
+import pandas as pd
 import streamlit as st
 from abc import ABC, abstractmethod
 
@@ -13,6 +14,12 @@ from scipy.stats import gaussian_kde
 
 
 class Page(ABC):
+
+    # Abstract initialization method with data parameter
+    @abstractmethod
+    def __init__(self, data):
+        pass
+
     @abstractmethod
     def write(self):
         pass
@@ -34,6 +41,59 @@ def add_custom_css():
             details[title="Click to view actions"] {
                 visibility: hidden;
             }
+            
+            .st-a-l {
+                font-size: 14pt;
+                font-weight: bold;
+                padding-top: 19px;
+                padding-bottom: 20px;
+            }
+            
+            .st-t {
+                font-size: 22pt;
+                padding-bottom: 10px;
+                text-align: center;
+            }
+            
+            .st-t-h {
+                font-size: 22pt;
+                font-weight: bold;
+            }
+            
+            .st-label {
+                font-size: 22pt;
+                font-weight: bold;
+                padding-bottom: 22px;
+            }
+            
+            .st-chart-label {
+                font-size: 22pt;
+                font-weight: bold;
+                padding-bottom: 30px;
+            }
+            
+            .st-value {
+                font-size: 22pt;
+                padding-bottom: 22px;
+            }
+            .vg-tooltip {
+                font-size: 14px !important;
+            }
+            button[title="View fullscreen"] {
+                visibility: hidden;
+            }
+            details[title="Click to view actions"] {
+                visibility: hidden;
+            }
+            
+            [data-testid="collapsedControl"] {
+                display: none
+            }
+            
+            section.main > div:has(~ footer ) {
+                padding-bottom: 0px;
+                margin-bottom: -100px;
+            }
             </style>
         """
     # Apply CSS style for square corners
@@ -44,56 +104,26 @@ def h4_header(text):
     st.markdown(f'<h4 style="text-align:left;">{text}</h3>', unsafe_allow_html=True)
 
 
-def load_shap_values():
-    config = toml.load("config.toml")
-    shap_path = config["paths"]["shap_path"]
-    if os.path.exists(shap_path):
-        with open(shap_path, 'rb') as f:
-            data = pickle.load(f)
-        return data
-    else:
-        st.error("SHAP values not found. Please run the model training script.")
-        st.stop()
+def plot_normal_distribution(mean, variance, label):
+    # Calculate the standard deviation
+    std_dev = np.sqrt(variance)
 
-def flatten_array(array):
-    """
-    Ensure the SHAP values are a 1D array.
+    # Generate x values within ±4 standard deviations of the mean
+    start = mean - 3 * std_dev
+    end = mean + 3 * std_dev
+    x_values = np.linspace(start, end, 1000)
 
-    :param array: Array to be flattened if necessary
-    :return: Flattened array
-    """
-    return array.flatten() if array.ndim > 1 else array
+    # Calculate the normal distribution for each x value
+    y_values = (1 / (std_dev * np.sqrt(2 * np.pi))) * np.exp(-0.5 * ((x_values - mean) / std_dev) ** 2)
 
+    # Convert to percentage
+    y_values = y_values * 100
 
-def compute_y_offsets(feature_values, spacing=0.4):
-    """
-    Compute the y-offsets symmetrically around the center for each unique feature value.
+    # Create a DataFrame for Altair with the label for the legend
+    df = pd.DataFrame({
+        'X': x_values,
+        'Probability Density (%)': [round(i, 4) for i in y_values],
+        'Distribution': [label] * len(x_values)  # Add label for legend
+    })
 
-    :param feature_values: Series of feature values
-    :param spacing: The spacing factor to control the spread of points
-    :return: Array of y-offset values
-    """
-    # Group feature values to handle identical values
-    grouped = feature_values.groupby(feature_values).cumcount()
-
-    # Alternate offsets to spread symmetrically
-    offsets = (grouped % 2) * 2 - 1  # Alternate between -1 and 1
-    offsets *= (grouped // 2 + 1) * spacing  # Scale based on the group index
-
-    return offsets
-
-
-def compute_plot_bounds(shap_values, y_offsets):
-    """
-    Compute the bounds for the plot axes.
-
-    :param shap_values: Array of SHAP values
-    :param y_offsets: Array of y-offset values
-    :param scale_factor: Factor to scale the plot bounds
-    :return: Tuple of (bound_x, bound_y) for the plot
-    """
-    max_shap = max(abs(shap_values.min()), abs(shap_values.max()))
-    max_offset = max(abs(y_offsets.min()), abs(y_offsets.max()))
-    bound_x = max_shap * 1.1
-    bound_y = max_offset * 1.75
-    return bound_x, bound_y
+    return df
