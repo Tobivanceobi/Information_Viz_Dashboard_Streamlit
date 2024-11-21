@@ -21,8 +21,8 @@ add_custom_css()
 
 data_dark = {
     "Profile": {
-        "Attribute": ["Age", "Height", "Hobby", "Job"],
-        "Values": [42, 180, "Cooking", "Nurses"]
+        "Attribute": ["Hobby", "Age", "Job", "Height"],
+        "Values": ["Cooking", 42, "Nurses", 180]
     },
     "Group Statistics": {
         "Group": ["Group 1", "Group 2"],
@@ -46,8 +46,8 @@ data_dark = {
 
 data_light = {
     "Profile": {
-        "Attribute": ["Age", "Height", "Hobby", "Job"],
-        "Values": [42, 180, "Cooking", "Nurses"]
+        "Attribute": ["Hobby", "Age", "Job", "Height"],
+        "Values": ["Cooking", 42, "Nurses", 180]
     },
     "Group Statistics": {
         "Group": ["Group 1", "Group 2"],
@@ -93,7 +93,7 @@ def main():
     hobby = st.sidebar.selectbox("Hobby", data["Hobby Distribution"]["Hobby"])
     job = st.sidebar.selectbox("Job", data["Job Distribution"]["Job"])
 
-    data["Profile"]["Values"] = [age, height, hobby, job]
+    data["Profile"]["Values"] = [hobby, age, job, height]
 
     st.session_state['current_page'] = "Dashboard"
 

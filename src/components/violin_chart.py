@@ -58,7 +58,7 @@ def plot_violine_chart(data, color_schema="category10", sample_size=1000):
             [alt.Tooltip("Height:Q", title="Height in cm", format=".0f"),
                 alt.Tooltip("density:Q", title="Count", format=".0f")]
         )
-        .properties(width=450, height=80)
+        .properties(width=515, height=90)
     )
 
     # Render the chart in Streamlit

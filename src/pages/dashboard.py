@@ -23,49 +23,48 @@ class Dashboard(Page):
         pass
 
     def write(self):
-        with st.container(border=2):
+        with st.container(border=True):
             st.markdown('<div class="st-t"> '
                         '<span class="st-t-h"> User Task: </span> '
-                        'Determine whether the subject belongs to Group 1 or Group 2 based on their profile and the '
-                        'attribute distributions shown. </div>',
+                        'To which group is this person likely to belong to based on their attributes and distributions, and how confident are you? </div>',
                         unsafe_allow_html=True)
-        cols = st.columns((3, 5, 5), gap='medium')
+        cols = st.columns((1.8, 5, 5), gap='medium')
 
         with cols[0]:
-            with st.container(border=2):
-                st.markdown('<div class="st-chart-label"> Subject Profile </div>', unsafe_allow_html=True)
-                row = st.columns((1, 1.5), gap='medium')
-                with row[0]:
-                    for attr in self.data['Profile']['Attribute']:
-                        st.markdown(f'<div class="st-label"> {attr}: </div>', unsafe_allow_html=True)
-                with row[1]:
-                    for val in self.data['Profile']['Values']:
-                        st.markdown(f'<div class="st-value"> {val} </div>', unsafe_allow_html=True)
+            with st.container(border=True):
+                st.markdown('<div class="st-chart-label" style="padding-bottom: 40px; padding-top: 20px; text-align: center;"> Person Profile </div>', unsafe_allow_html=True)
 
-            with st.container(border=2):
-                st.markdown('<div class="st-chart-label"> Questions to Answer: </div>', unsafe_allow_html=True)
-                st.markdown('<div class="st-a-l"> To which group (1 or 2) dose the subject belong to? </div>',
-                            unsafe_allow_html=True)
+            for i, attr in enumerate(self.data['Profile']['Attribute']):
+                with st.container(border=True):
+                    st.markdown(
+                        f'<div class="st-label"> {attr}</div>',
+                        unsafe_allow_html=True)
+                    st.markdown(f'<div class="st-value"> {self.data["Profile"]["Values"][i]} </div>', unsafe_allow_html=True)
 
-                st.markdown('<div class="st-a-l" style="padding-bottom: 100px"> '
-                            'How confident from 0 (not confident) to 10 (very confident) are you in your answer? '
-                            '</div>', unsafe_allow_html=True)
+            # with st.container(border=True):
+            #     st.markdown('<div class="st-chart-label"> Questions to Answer: </div>', unsafe_allow_html=True)
+            #     st.markdown('<div class="st-a-l"> To which group (1 or 2) dose the subject belong to? </div>',
+            #                 unsafe_allow_html=True)
+
+            #     st.markdown('<div class="st-a-l" style="padding-bottom: 100px"> '
+            #                 'How confident from 0 (not confident) to 10 (very confident) are you in your answer? '
+            #                 '</div>', unsafe_allow_html=True)
 
         with cols[1]:
-            with st.container(border=2):
+            with st.container(border=True):
                 st.markdown('<div class="st-chart-label"> Hobby Distribution</div>', unsafe_allow_html=True)
                 plot_pie_chart(self.data["Hobby Distribution"], color_schema="category10")
 
-            with st.container(border=2):
+            with st.container(border=True):
                 st.markdown('<div class="st-chart-label">Job Distribution</div>', unsafe_allow_html=True)
                 plot_grouped_bar_chart(self.data["Job Distribution"], color_schema="category10")
 
         with cols[2]:
-            with st.container(border=2):
+            with st.container(border=True):
                 st.markdown('<div class="st-chart-label"> Age Distribution </div>', unsafe_allow_html=True)
                 plot_bell_chart(self.data["Group Statistics"], color_schema="category10")
 
-            with st.container(border=2):
+            with st.container(border=True):
                 st.markdown('<div class="st-chart-label"> Height Distribution </div>', unsafe_allow_html=True)
                 data = pd.DataFrame({
                     "Height Mean": self.data["Group Statistics"]["Height Mean"],

@@ -21,5 +21,5 @@ def plot_grouped_bar_chart(data, color_schema="category10"):
                           header=alt.Header(
                               labelAngle=-90, labelAlign='right', orient='bottom', title=None),
                           )
-    ).properties(width=25, height=145)
+    ).properties(width=30, height=170)
     st.altair_chart(chart, use_container_width=False)

@@ -43,5 +43,5 @@ def plot_bell_chart(data, color_schema="category10"):
                         ),
         tooltip=[alt.Tooltip('X', title='Age', format='.0f'),
                  alt.Tooltip('Probability Density (%)', title='Count', format='.0f')]
-    ).properties(height=250)
+    ).properties(height=287)
     st.altair_chart(chart, use_container_width=True)

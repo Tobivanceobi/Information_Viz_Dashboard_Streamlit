@@ -20,5 +20,5 @@ def plot_pie_chart(data, color_schema="category10"):
             alt.Tooltip("Hobby", title="Hobby"),
             alt.Tooltip("Percentage", title="Portion", format=".2f")
         ]
-    ).properties(width=220, height=205)
+    ).properties(width=260, height=240)
     st.altair_chart(chart, use_container_width=False)

@@ -63,7 +63,9 @@ def add_custom_css():
             .st-label {
                 font-size: 22pt;
                 font-weight: bold;
-                padding-bottom: 22px;
+                padding-bottom: 15px;
+                padding-top: 10px;
+                text-align: center;
             }
             
             .st-chart-label {
@@ -75,6 +77,7 @@ def add_custom_css():
             .st-value {
                 font-size: 22pt;
                 padding-bottom: 22px;
+                text-align: center;
             }
             .vg-tooltip {
                 font-size: 14px !important;
